@@ -5,6 +5,6 @@ from .models import Document, Person
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ['description', 'document', 'uploaded_at']
+    list_display = ['description', 'document', 'ipaddr_and_date', 'uploaded_at', 'updated']
 
 admin.site.register(Person)

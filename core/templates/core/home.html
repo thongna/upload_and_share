@@ -16,7 +16,29 @@
             <li>
                 <a href="{{ obj.document.url }}">{{ obj.description }}</a>
                 <small>(Uploaded at: {{ obj.uploaded_at }})</small>
+                {% if obj.get_ip_of_document == ip %}
+                    <a href="#" data-id="{{ obj.id }}" data-action="delete" class="delete-document">Delete</a>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
+{% endblock %}
+{% block domready %}
+  $('a.delete-document').click(function(e){
+    if (confirm('Are you sure?')) {
+            e.preventDefault();
+            $.post('{% url "delete_document" %}',
+              {
+                id: $(this).data('id'),
+                action: $(this).data('action')
+              },
+              function(data){
+                if (data['status'] == 'ok')
+                {
+                    window.location.reload();
+                }
+            }
+            );
+    }
+  });
 {% endblock %}
