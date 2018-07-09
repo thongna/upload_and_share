@@ -17,6 +17,8 @@ class Document(models.Model):
     def get_ip_of_document(self):
         return self.ipaddr_and_date.rsplit('_', 1)[0]
 
+    class Meta:
+        ordering = ('-uploaded_at',)
 
 
 class Person(User):
@@ -34,9 +36,10 @@ def delete_file_pre_delete_document(sender, instance, *args, **kwargs):
 
 @receiver(pre_save, sender=Document)
 def delete_file_pre_update_document(sender, instance, *args, **kwargs):
+    print("hello")
     if instance.document:
         try:
-            doc = Document.objects.get(ipaddr_and_date=str(instance.document.ipaddr_and_date))
+            doc = Document.objects.get(ipaddr_and_date=str(instance.ipaddr_and_date))
             _delete_file(doc.document.path)
         except:
             pass
