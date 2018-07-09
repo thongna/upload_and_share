@@ -13,7 +13,7 @@
     <p>Shared files:</p>
     <ul>
         {% for obj in documents %}
-            <li>
+            <li class="{{ obj.id }}">
                 <a href="{{ obj.document.url }}">{{ obj.description }}</a>
                 <small>(Uploaded at: {{ obj.uploaded_at }})</small>
                 {% if obj.get_ip_of_document == ip %}
@@ -35,7 +35,8 @@
               function(data){
                 if (data['status'] == 'ok')
                 {
-                    window.location.reload();
+                    var $id = '.' + (data['document-id']);
+                    $($id).remove();
                 }
             }
             );

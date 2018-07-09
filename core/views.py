@@ -65,7 +65,7 @@ def delete_document(request):
         try:
             if action == 'delete':
                 Document.objects.get(id=document_id).delete()
-            return JsonResponse({'status': 'ok'})
+            return JsonResponse({'status': 'ok', 'document-id': document_id})
         except:
             pass
     return JsonResponse({'status':'ko'})
