@@ -4,16 +4,18 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from common.decorators import ajax_required
 from django.core.files.storage import FileSystemStorage
-from .models import Document, Person
+from .models import Document, Person, Department
 from .forms import DocumentForm
 import datetime
 
 def home(request):
     user = Person.objects.get(username='teacher')
     documents = user.documents.all()
+    dpts = Department.objects.all()
     ip = get_client_ip(request)
     return render(request, 'core/home.html', {'documents': documents,
-                                              'ip': ip})
+                                              'ip': ip,
+                                              'departments': dpts})
 
 def simple_upload(request):
     if request.method == 'POST' and request.FILES['myfile']:
@@ -42,6 +44,7 @@ def model_form_upload(request):
             if document != None:
                 document.description = form.instance.description
                 document.document = form.instance.document
+                document.department = 'marketing/'
                 document.ipaddr_and_date = ip_and_date
                 document.updated = datetime.datetime.now()
                 document.save()

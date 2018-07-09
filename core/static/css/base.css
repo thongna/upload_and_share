@@ -3,7 +3,8 @@
 body {
     margin:0;
     padding:0;
-    font-family:helvetica, sans-serif;
+
+    font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
 }
 
 p {
@@ -274,4 +275,26 @@ img.user-detail {
 .action .date {
     font-style:italic;
     color:#ccc;
+}
+
+
+.upload {
+    width: 50%;
+    float: left;
+
+}
+
+
+.share {
+    width: 50%;
+    float: right;
+}
+
+.radio {
+    position: relative;
+
+    margin: 0 1rem 0 0 ;
+    padding-left: 10px;
+
+    cursor: pointer;
 }

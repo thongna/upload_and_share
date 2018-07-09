@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Document, Person
+from .models import Document, Person, Department
 
 # Register your models here.
 
@@ -8,3 +8,5 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = ['description', 'document', 'ipaddr_and_date', 'uploaded_at', 'updated']
 
 admin.site.register(Person)
+
+admin.site.register(Department)

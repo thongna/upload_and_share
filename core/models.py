@@ -3,10 +3,26 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete, pre_save, post_save
 from django.dispatch.dispatcher import receiver
+import datetime
+
+def get_upload_to(instance, filename):
+    return 'documents/%s/%d/%d/%d/%s' % (instance.department,
+                                         datetime.datetime.today().year,
+                                         datetime.datetime.today().month,
+                                         datetime.datetime.today().day,
+                                         filename)
+
+
+class Department(models.Model):
+    department = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.department
+
 
 class Document(models.Model):
     description = models.CharField(max_length=255, blank=True)
-    document = models.FileField(upload_to='documents/%Y/%m/%d/', default='', blank=True)
+    document = models.FileField(upload_to=get_upload_to)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     ipaddr_and_date = models.CharField(max_length=30, blank=True)
@@ -21,8 +37,10 @@ class Document(models.Model):
         ordering = ('-uploaded_at',)
 
 
+
 class Person(User):
     documents = models.ManyToManyField(Document, blank=True)
+
 
 def _delete_file(path):
     # Deletes file from filesystem.
