@@ -9,4 +9,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
 admin.site.register(Person)
 
-admin.site.register(Department)
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ['department', 'available']
+    list_editable = ['available',]

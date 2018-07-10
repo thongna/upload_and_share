@@ -2,39 +2,47 @@
 
 {% block content %}
     <div class="upload">
-        <ul>
-            <li>
-                <a href="{% url 'simple_upload' %}">Simple Upload</a>
-            </li>
-            <li>
-                <a href="{% url 'model_form_upload' %}">Model Form Upload</a>
-            </li>
-        </ul>
+        <div class="upload-btn-wrapper">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <label>CHOOSE YOUR DEPARTMENT:</label>
+                {% for dpt in departments %}
+                    <input type="radio" name="department" class="option-input radio" checked="checked" value="{{ dpt.department }}">
+                    <div class="department-name">  {{ dpt.department }}</div><br>
+                {% endfor %}
+                <button class="btn" type="submit">Upload a file</button>
+            </form>
+        </div>
 
-        <form action="">
-            {% for dpt in departments %}
-                <input type="radio" name="department" class="option-input radio" value="{{ dpt.department }}"><div class="department-name">  {{ dpt.department }}</div><br>
-            {% endfor %}
-        </form>
+
     </div>
 
     <div class="share">
-        <p>Shared files:</p>
-        <ul>
+         <div class="upload"><label>SHARED FILES:</label></div>
+        <div class="refresh"><button class="refresh-btn">Refresh</button></div>
+
+        <br>
+        <ol class="document-shared">
             {% for obj in documents %}
                 <li class="{{ obj.id }}">
                     <a href="{{ obj.document.url }}">{{ obj.description }}</a>
                     <small>(Uploaded at: {{ obj.uploaded_at }})</small>
-                    {% if obj.get_ip_of_document == ip %}
-                        <a href="#" data-id="{{ obj.id }}" data-action="delete" class="delete-document">Delete</a>
-                    {% endif %}
+                        {% if obj.get_ip_of_document == ip %}
+                            <a href="#" data-id="{{ obj.id }}" data-action="delete" class="delete-document">DELETE</a>
+                        {% endif %}
+
                 </li>
             {% endfor %}
-        </ul>
+        </ol>
     </div>
 
 {% endblock %}
 {% block domready %}
+    $('.refresh-btn').click(function(){
+        window.location.reload();
+    });
+
     $('a.delete-document').click(function(e){
     if (confirm('Are you sure?')) {
     e.preventDefault();

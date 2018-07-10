@@ -11,12 +11,43 @@ import datetime
 def home(request):
     user = Person.objects.get(username='teacher')
     documents = user.documents.all()
-    dpts = Department.objects.all()
+    dpts = Department.objects.filter(available=True)
     ip = get_client_ip(request)
+
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            ip = get_client_ip(request)
+            date = str(datetime.datetime.today().year) + str(datetime.datetime.today().month) + str(datetime.datetime.today().day)
+            ip_and_date = ip + "_" + date
+            document = Document
+            try:
+                document = Document.objects.get(ipaddr_and_date=ip_and_date)
+            except:
+                document = None
+            if document != None:
+                document.description = form.instance.description
+                document.document = form.instance.document
+                document.department = 'marketing/'
+                document.ipaddr_and_date = ip_and_date
+                document.updated = datetime.datetime.now()
+                document.save()
+            else:
+                new_form = form.save(commit=False)
+                new_form.ipaddr_and_date = ip_and_date
+                new_form.department =request.POST.get('department')
+                new_form.save()
+            return redirect('home')
+    else:
+        form = DocumentForm()
+
     return render(request, 'core/home.html', {'documents': documents,
                                               'ip': ip,
-                                              'departments': dpts})
+                                              'departments': dpts,
+                                              'form': form})
 
+# simple upload
+"""
 def simple_upload(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
@@ -27,8 +58,10 @@ def simple_upload(request):
             'uploaded_file_url': uploaded_file_url
         })
     return render(request, 'core/simple_upload.html')
+"""
 
-
+# model upload
+""" Upload form model
 def model_form_upload(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -58,6 +91,8 @@ def model_form_upload(request):
     return render(request, 'core/model_form_upload.html', {
         'form': form
     })
+
+"""
 
 @ajax_required
 @require_POST

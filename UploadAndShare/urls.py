@@ -21,9 +21,9 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', views.home, name='home'),
-    path('simple_upload', views.simple_upload, name='simple_upload'),
-    path('upload/', views.model_form_upload, name='model_form_upload'),
+    path('', views.home, name='home'),
+    #path('simple_upload', views.simple_upload, name='simple_upload'),
+    #path('upload/', views.model_form_upload, name='model_form_upload'),
     path('delete/', views.delete_document, name='delete_document'),
 ]
 

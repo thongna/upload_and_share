@@ -5,7 +5,7 @@
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "css/base.css" %}" rel="stylesheet">
     <div id="header">
-        <span class="logo">Upload Document</span>
+        <span class="logo"><a href='{% url 'home' %}' >UPLOAD DOCUMENT</a></span>
     </div>
     {% if messages %}
         <ul class="messages">
