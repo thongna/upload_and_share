@@ -17,14 +17,17 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from core import views
+from core import views as core_views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    #path('simple_upload', views.simple_upload, name='simple_upload'),
-    #path('upload/', views.model_form_upload, name='model_form_upload'),
-    path('delete/', views.delete_document, name='delete_document'),
+    path('', core_views.home, name='home'),
+    path('delete/', core_views.delete_document, name='delete_document'),
+    path('select-document/', core_views.share_document, name='select_document'),
+    path('save/', core_views.save_shared_document, name='save_shared_documents'),
 ]
 
 if settings.DEBUG:

@@ -7,6 +7,7 @@ from django.core.files.storage import FileSystemStorage
 from .models import Document, Person, Department
 from .forms import DocumentForm
 import datetime
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     user = Person.objects.get(username='teacher')
@@ -46,53 +47,41 @@ def home(request):
                                               'departments': dpts,
                                               'form': form})
 
-# simple upload
-"""
-def simple_upload(request):
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
-        return render(request, 'core/simple_upload.html', {
-            'uploaded_file_url': uploaded_file_url
-        })
-    return render(request, 'core/simple_upload.html')
-"""
+@login_required
+def share_document(request):
+    user = Person.objects.get(username='teacher')
+    documents = user.documents.all()
+    allOfDocument = Document.objects.all()
+    hidden_documents = allOfDocument
+    for a in allOfDocument:
+        if a in documents:
+            hidden_documents = hidden_documents.exclude(id=a.id)
+    return render(request, 'core/select-shared-files.html', {'documents': documents,
+                                                             'hidden_documents': hidden_documents})
 
-# model upload
-""" Upload form model
-def model_form_upload(request):
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            ip = get_client_ip(request)
-            date = str(datetime.datetime.today().year) + str(datetime.datetime.today().month) + str(datetime.datetime.today().day)
-            ip_and_date = ip + "_" + date
-            document = Document
-            try:
-                document = Document.objects.get(ipaddr_and_date=ip_and_date)
-            except:
-                document = None
-            if document != None:
-                document.description = form.instance.description
-                document.document = form.instance.document
-                document.department = 'marketing/'
-                document.ipaddr_and_date = ip_and_date
-                document.updated = datetime.datetime.now()
-                document.save()
-            else:
-                new_form = form.save(commit=False)
-                new_form.ipaddr_and_date = ip_and_date
-                new_form.save()
-            return redirect('home')
-    else:
-        form = DocumentForm()
-    return render(request, 'core/model_form_upload.html', {
-        'form': form
-    })
-
-"""
+@ajax_required
+@require_POST
+def save_shared_document(request):
+    print('save')
+    ids = request.POST.get('id[]')
+    user = Person.objects.get(username='teacher')
+    documents = user.documents.all()
+    document_ids = []
+    for document in documents:
+        document_ids.append(document.id)
+    new_document_ids = []
+    if id:
+        try:
+            for id in ids:
+                if id not in document_ids:
+                    new_document_ids.append(id)
+            cleaned_list = map(int, new_document_ids)
+            for new_document_id in cleaned_list:
+                user.documents.add(id=new_document_id)
+            return JsonResponse({'status': 'ok', 'ids': ids})
+        except:
+            pass
+    return JsonResponse({'status': 'ko', 'ids': ids})
 
 @ajax_required
 @require_POST

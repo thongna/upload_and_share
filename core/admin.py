@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import Document, Person, Department
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
 # Register your models here.
 
@@ -13,3 +15,4 @@ admin.site.register(Person)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['department', 'available']
     list_editable = ['available',]
+

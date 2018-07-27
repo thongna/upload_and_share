@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %} Select Shared Documents {% endblock %}
+
+{% block content %}
+    <p class="shared-document">SELECT SHARED DOCUMENTS:</p>
+    <br>
+    <form action="." method="post">
+        {% csrf_token %}
+        {% for d in documents %}
+            <div class="department-name"><input type="checkbox" class="checkbox" name="document" value="{{ d.id }}"
+                                                checked="checked">{{ d.description }}<br></div>
+        {% endfor %}
+        {% for hd in hidden_documents %}
+            <div class="department-name"><input type="checkbox" class="checkbox" name="document"
+                                                value="{{ hd.id }}">{{ hd.description }}<br></div>
+        {% endfor %}
+        <br>
+        <input type="submit" class="submit" value="Save">
+    </form>
+
+{% endblock %}
+{% block domready %}
+    $('.submit').click(function(e){
+    if (confirm('Are you sure?')) {
+    var ids = [];
+    $('.checkbox:checked').each(function (i, e) {
+    ids.push($(this).val());
+    });
+
+    $.post('{% url "save_shared_documents" %}',
+    {
+    id[]: ids
+    },
+    function(data){
+    if (data['status'] == 'ko')
+    {
+    alert('ok');
+    }
+    }
+    );
+    }
+    });
+{% endblock %}
