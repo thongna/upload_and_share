@@ -59,33 +59,47 @@ def share_document(request):
     return render(request, 'core/select-shared-files.html', {'documents': documents,
                                                              'hidden_documents': hidden_documents})
 
+@login_required
 @ajax_required
 @require_POST
 def save_shared_document(request):
-    print('save')
-    ids = request.POST.get('id[]')
+    idd = request.POST.get('id')
+    ids = idd.split('|')
+    ids.pop()
+    ids = [int(i) for i in ids]
     user = Person.objects.get(username='teacher')
     documents = user.documents.all()
     document_ids = []
     for document in documents:
         document_ids.append(document.id)
     new_document_ids = []
-    if id:
+    removed_document_ids = []
+    if ids:
         try:
-            for id in ids:
-                if id not in document_ids:
-                    new_document_ids.append(id)
-            cleaned_list = map(int, new_document_ids)
-            for new_document_id in cleaned_list:
-                user.documents.add(id=new_document_id)
-            return JsonResponse({'status': 'ok', 'ids': ids})
+            for i in ids:
+                if i not in document_ids:
+                    new_document_ids.append(i)
+            if new_document_ids:
+                for new_document_id in new_document_ids:
+                    new_document = Document.objects.get(id=new_document_id)
+                    user.documents.add(new_document)
+
+            for document_id in document_ids:
+                if document_id not in ids:
+                    removed_document_ids.append(document_id)
+            if removed_document_ids:
+                for removed_document_id in removed_document_ids:
+                    removed_document = Document.objects.get(id=removed_document_id)
+                    user.documents.remove(removed_document)
+            return JsonResponse({'status': 'ok'})
         except:
             pass
-    return JsonResponse({'status': 'ko', 'ids': ids})
+    return JsonResponse({'status': 'ko'})
 
 @ajax_required
 @require_POST
 def delete_document(request):
+    print('delete')
     document_id = request.POST.get('id')
     action = request.POST.get('action')
     if document_id and action:

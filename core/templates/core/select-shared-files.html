@@ -2,9 +2,10 @@
 {% block title %} Select Shared Documents {% endblock %}
 
 {% block content %}
-    <p class="shared-document">SELECT SHARED DOCUMENTS:</p>
+    <a href="/admin/core/department/">>>>Manage the list of Departments<<<</a>
+    <p class="shared-document">SELECT DOCUMENTS TO SHARE:</p>
     <br>
-    <form action="." method="post">
+    <form method="post">
         {% csrf_token %}
         {% for d in documents %}
             <div class="department-name"><input type="checkbox" class="checkbox" name="document" value="{{ d.id }}"
@@ -20,24 +21,24 @@
 
 {% endblock %}
 {% block domready %}
-    $('.submit').click(function(e){
-    if (confirm('Are you sure?')) {
-    var ids = [];
-    $('.checkbox:checked').each(function (i, e) {
-    ids.push($(this).val());
-    });
 
+   $(".submit").click(function (e) {
+    e.preventDefault();
+    var checkbox_value = "";
+    $(":checkbox").each(function () {
+        var ischecked = $(this).is(":checked");
+        if (ischecked) {
+            checkbox_value += $(this).val() + "|";
+        }
+    });
+    // your awesome code calling ajax
     $.post('{% url "save_shared_documents" %}',
     {
-    id[]: ids
+    id: checkbox_value
     },
     function(data){
-    if (data['status'] == 'ko')
-    {
-    alert('ok');
-    }
+        location.reload(true);
     }
     );
-    }
     });
 {% endblock %}

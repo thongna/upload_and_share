@@ -50,7 +50,15 @@ ol {
     float:left;
     color:#f3f7cc;
     font-size:20px;
-    margin-right:10%;
+    width: 85%;
+}
+
+#header .menu {
+    font-family: 'Muli', sans-serif;
+    float:right;
+    color:#f3f7cc;
+    font-size:14px;
+    width: 15%;
 }
 
 #header ul.menu {
